@@ -416,27 +416,7 @@ class Database {
         System.out.println(hr);
     }
     void sort() {
-        boolean b = true;
-        while(b) {
-            b = false;
-            for(int i = 0; i < database.size()-1; i += 2){
-                if(greaterThan(database.get(i), database.get(i + 1))) {
-                    Record temp = database.get(i);
-                    database.set(i, database.get(i + 1));
-                    database.set(i + 1, temp);
-                    b = true;
-                }
-            }
-            for(int i = 1; i < database.size()-1; i += 2){
-                if(greaterThan(database.get(i), database.get(i + 1))) {
-                    Record temp = database.get(i);
-                    database.set(i, database.get(i + 1));
-                    database.set(i + 1, temp);
-                    b = true;
-                }
-            }
-
-        }
+        Collections.sort(database);
         System.out.println("sorted");
     }
     void find(String data) {
@@ -465,23 +445,6 @@ class Database {
 
         return true;
     }
-    private boolean greaterThan(Record a, Record b) {
-        int d1 = Integer.parseInt(a.date.split("/")[0]), d2 = Integer.parseInt(b.date.split("/")[0]);
-        int m1 = Integer.parseInt(a.date.split("/")[1]), m2 = Integer.parseInt(b.date.split("/")[1]);
-        int y1 = Integer.parseInt(a.date.split("/")[2]), y2 = Integer.parseInt(b.date.split("/")[2]);
-        if(y1 > y2) {
-            return true;
-        }
-        else if(y1 == y2 && m1 > m2) {
-            return  true;
-        }
-        else if(m1 == m2 && d1 > d2) {
-            return true;
-        }
-        else {
-            return  false;
-        }
-    }
 }
 class Record implements Comparable<Record> {
     int id, days;
@@ -496,8 +459,33 @@ class Record implements Comparable<Record> {
         this.vehicle = vehicle;
     }
     public int compareTo(Record o) {
-
-        int a = 0;
-        return 0;
+        int d1 = Integer.parseInt(this.date.split("/")[0]), d2 = Integer.parseInt(o.date.split("/")[0]);
+        int m1 = Integer.parseInt(this.date.split("/")[1]), m2 = Integer.parseInt(o.date.split("/")[1]);
+        int y1 = Integer.parseInt(this.date.split("/")[2]), y2 = Integer.parseInt(o.date.split("/")[2]);
+        if(y1 > y2) {
+            return 1;
+        }
+        else if(y1 == y2) {
+            if(m1 > m2) {
+                return 1;
+            }
+            else if(m1 == m2){
+                if(d1 > d2) {
+                    return 1;
+                }
+                else if(d1 == d2) {
+                    return 0;
+                }
+                else  {
+                    return -1;
+                }
+            }
+            else {
+                return -1;
+            }
+        }
+        else {
+            return -1;
+        }
     }
 }
