@@ -483,7 +483,7 @@ class Database {
         }
     }
 }
-class Record implements Comparable {
+class Record implements Comparable<Record> {
     int id, days;
     String city, date, vehicle;
     double price;
@@ -496,6 +496,8 @@ class Record implements Comparable {
         this.vehicle = vehicle;
     }
     public int compareTo(Record o) {
-      return 0;
+
+        int a = 0;
+        return 0;
     }
 }
