@@ -441,6 +441,10 @@ class Database {
         avg = avg / database.size();
         System.out.printf("average=%.2f\n", avg);
     }
+    boolean validate(String data, boolean newRecord) {
+        //TODO develop validation
+        return false;
+    }
 }
 class Record implements Comparable<Record> {
     int id, days;
