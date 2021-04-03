@@ -442,8 +442,20 @@ class Database {
         System.out.printf("average=%.2f\n", avg);
     }
     boolean validate(String data, boolean newRecord) {
-        //TODO develop validation
-        return false;
+        boolean validation = false;
+        String[] fields = data.split(";", 6);
+        if(fields.length == 6){
+            try {
+
+            }catch (Exception e) {
+
+            }
+        }
+        else {
+            System.out.println("wrong field count");
+            return false;
+        }
+        return validation;
     }
 }
 class Record implements Comparable<Record> {
