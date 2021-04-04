@@ -16,7 +16,7 @@ public class Main {
             switch (command[0]) {
                 case "add":
                     if(command.length == 2) {
-                        db.add(command[1], true);
+                        db.update(command[1], true, true);
                     }
                     else {
                         System.out.println("wrong field count");
@@ -49,7 +49,7 @@ public class Main {
                     break;
                 case "edit":
                     if(command.length == 2) {
-                        db.edit(command[1]);
+                        db.update(command[1], false, true);
                     }
                     else {
                         System.out.println("wrong field count");
@@ -86,7 +86,7 @@ class Database {
             String s;
             while (sc.hasNextLine()) {
                 s = sc.nextLine();
-                this.add(s, false);
+                this.update(s, true, false);
             }
             sc.close();
         } catch (FileNotFoundException e) {
@@ -105,18 +105,6 @@ class Database {
             out.close();
         } catch (IOException e) {
             e.printStackTrace();
-        }
-    }
-    void add(String data, boolean isNew) {
-        if(validate(data, true)) {
-            if(isNew) {
-                System.out.println("added");
-            }
-        }
-    }
-    void edit(String data) {
-        if(validate(data, false)) {
-            System.out.println("edited");
         }
     }
     void del(String data) {
@@ -199,10 +187,37 @@ class Database {
         avg = avg / database.size();
         System.out.printf("average=%.2f\n", avg);
     }
-    boolean validate(String data, boolean newRecord) {
-        boolean validation = true;
-        System.out.println(validation);
-        return validation;
+    void update(String input, boolean insertNew, boolean showMessage) {
+        String[] data = input.split(";");
+        if(data.length != 6) {
+            System.out.println("wrong field count");
+            return;
+        }
+        //ID pārbaude
+        for(int i = 0; i < 6; i++){data[i] = data[i].trim();}
+        int id;
+        if(!data[0].matches("[1-9]{1}[0-9]{2}")) {
+            System.out.println("wrong id");
+            return;
+        }
+        id = Integer.parseInt(data[0]);
+        boolean exists = false;
+        for(int i = 0; i < database.size(); i++) {
+            if(database.get(i).id == i) exists = true;
+        }
+        if(exists && insertNew || !exists && !insertNew) {
+            System.out.println("wrong id");
+            return;
+        }
+        //Datuma pārbaude
+        String date = data[2];
+        if(!date.matches("[0-9]{2}/[0-9]{2}/[0-9]{4}")) {
+            System.out.println("wrong date");
+            return;
+        }
+        int d = Integer.parseInt(data[2].substring(0,2));
+        int m = Integer.parseInt(data[2].substring(0,2));
+        int y = Integer.parseInt(data[2].substring(0,2));
     }
 }
 class Record implements Comparable<Record> {
