@@ -108,258 +108,12 @@ class Database {
         }
     }
     void add(String data, boolean isNew) {
-        String[] fields = data.split(";", 6);
-        if (fields.length != 6) {
-            System.out.println("wrong field count");
-        }
-        else {
-            int id = 0, days = 0;
-            double price = 0;
-            String city = fields[1].trim(), date = fields[2].trim(), vehicle = fields[5];
-            boolean isValid = true;
-            while (isValid) {
-                try {
-                    id = Integer.parseInt(fields[0]);
-                }catch (Exception e) {
-                    isValid = false;
-                }
-                //System.out.println(id);
-                if(id > 99 && id < 1000) {
-                    for (int i = 0; i < database.size(); i++) {
-                        if(database.get(i).id == id) {
-                            isValid = false;
-                            break;
-                        }
-                    }
-                }
-                else {
-                    isValid = false;
-                }
-                if (!isValid) {
-                    System.out.println("wrong id");
-                    break;
-                }
-                //Datuma pārbaude
-                try {
-                    String[] dateArr = date.split("/");
-                    int d = Integer.parseInt(dateArr[0]);
-                    int m = Integer.parseInt(dateArr[1]);
-                    int y = Integer.parseInt(dateArr[2]);
-                    if(y > 0 && d >= 1 && m >= 1 && m <= 12) {
-                        if (m == 1 || m == 3 || m == 5 || m == 7 || m == 8 || m == 10 || m == 12) {
-                            if (d > 31) {
-                                isValid = false;
-                            }
-                        }
-                        if (m == 4 || m == 6 || m == 9 || m == 11) {
-                            if (d > 30) {
-                                isValid = false;
-                            }
-                        }
-                        if (m == 2) {
-                            if (y % 4 == 0 && d > 29) {
-                                isValid = false;
-                            } else if (y % 4 != 0 && d > 28) {
-                                isValid = false;
-                            }
-                        }
-                    }
-                    else {
-                        isValid = false;
-                    }
-                    if (!isValid) {
-                        System.out.println("wrong date");
-                        break;
-                    }
-                }catch (Exception e) {
-                    System.out.println("wrong date");
-                    isValid = false;
-                    break;
-                }
-                //Dienu skaita pārbaude
-                try {
-                    days = Integer.parseInt(fields[3]);
-                }catch (Exception e) {
-                    isValid = false;
-                    System.out.println("wrong day count");
-                    break;
-                }
-                //Cenas pārbaude
-                try {
-                    price = Double.parseDouble(fields[4]);
-                }catch (Exception e) {
-                    isValid = false;
-                    System.out.println("wrong price");
-                    break;
-                }
-                //Transportlīdzekļa pārbaude
-                if(!(vehicle.equals("PLANE") || vehicle.equals("BUS") || vehicle.equals("BOAT") || vehicle.equals("TRAIN"))) {
-                    isValid = false;
-                    System.out.println("wrong vehicle");
-                    break;
-                }
-                //System.out.print(10);
-                break;
-            }
-            if (isValid) {
-                String[] cityArr = city.split("\\s+");
-                city = "";
-                if(cityArr.length == 1) {
-                    city += cityArr[0].substring(0,1).toUpperCase();
-                    city += cityArr[0].substring(1).toLowerCase();
-                }
-                else {
-                    for (int i = 0; i < cityArr.length; i++) {
-                        city += cityArr[i].substring(0,1).toUpperCase();
-                        city += cityArr[i].substring(1).toLowerCase();
-                        if(i != cityArr.length - 1) {
-                            city += " ";
-                        }
-                    }
-                }
-                database.add(new Record(id, city, date, days, price, vehicle));
-                if(isNew) {
-                    System.out.println("added");
-                }
-            }
+        if(validate(data, true)){
+
         }
     }
     void edit(String data) {
-        String[] fields = data.split(";", 6);
-        if (fields.length != 6) {
-            System.out.println("wrong field count");
-        }
-        else {
-            Record editable = database.get(0);
-            int id = 0, days = 0;
-            double price = 0;
-            String city = fields[1].trim(), date = fields[2].trim(), vehicle = fields[5];
-            boolean isValid = true;
-            while (isValid) {
-                try {
-                    id = Integer.parseInt(fields[0]);
-                }catch (Exception e) {
-                    isValid = false;
-                }
-                //System.out.println(id);
-                if(id > 99 && id < 1000) {
-                    isValid = false;
-                    for (int i = 0; i < database.size(); i++) {
-                        if(database.get(i).id == id) {
-                            isValid = true;
-                            editable = database.get(i);
-                            break;
-                        }
-                    }
-                }
-                else {
-                    isValid = false;
-                }
-                if (!isValid) {
-                    System.out.println("wrong id");
-                    break;
-                }
-                if(!date.equals("")) {
-                    try {
-                        String[] dateArr = date.split("/");
-                        int d = Integer.parseInt(dateArr[0]);
-                        int m = Integer.parseInt(dateArr[1]);
-                        int y = Integer.parseInt(dateArr[2]);
-                        if (y > 0 && d >= 1 && m >= 1 && m <= 12) {
-                            if (m == 1 || m == 3 || m == 5 || m == 7 || m == 8 || m == 10 || m == 12) {
-                                if (d > 31) {
-                                    isValid = false;
-                                }
-                            }
-                            if (m == 4 || m == 6 || m == 9 || m == 11) {
-                                if (d > 30) {
-                                    isValid = false;
-                                }
-                            }
-                            if (m == 2) {
-                                if (y % 4 == 0 && d > 29) {
-                                    isValid = false;
-                                } else if (y % 4 != 0 && d > 28) {
-                                    isValid = false;
-                                }
-                            }
-                        } else {
-                            isValid = false;
-                        }
-                        if (!isValid) {
-                            System.out.println("wrong date");
-                            break;
-                        }
-                        //System.out.printf("%d %d %d", day, month, year);
-                    } catch (Exception e) {
-                        System.out.println("wrong date");
-                        isValid = false;
-                        break;
-                    }
-                }
-                if(!fields[3].equals("")) {
-                    try {
-                        days = Integer.parseInt(fields[3]);
-                    } catch (Exception e) {
-                        isValid = false;
-                        System.out.println("wrong day count");
-                        break;
-                    }
-                }
-                if(!fields[4].equals("")) {
-                    try {
-                        price = Double.parseDouble(fields[4]);
-                    } catch (Exception e) {
-                        isValid = false;
-                        System.out.println("wrong price");
-                        break;
-                    }
-                }
-                if(!fields[5].equals("")) {
-                    if (!(vehicle.equals("PLANE") || vehicle.equals("BUS") || vehicle.equals("BOAT") || vehicle.equals("TRAIN"))) {
-                        isValid = false;
-                        System.out.println("wrong vehicle");
-                        break;
-                    }
-                }
-                //System.out.print(10);
-                break;
-            }
-            if (isValid) {
-                if(!fields[1].equals("")) {
-                    String[] cityArr = city.split("\\s+");
-                    city = "";
-                    if (cityArr.length == 1) {
-                        city += cityArr[0].substring(0, 1).toUpperCase();
-                        city += cityArr[0].substring(1).toLowerCase();
-                    } else {
-                        for (int i = 0; i < cityArr.length; i++) {
-                            city += cityArr[i].substring(0, 1).toUpperCase();
-                            city += cityArr[i].substring(1).toLowerCase();
-                            if (i != cityArr.length - 1) {
-                                city += " ";
-                            }
-                        }
-                    }
-                }
-                if(!fields[1].equals("")) {
-                    editable.city = city;
-                }
-                if(!fields[2].equals("")) {
-                    editable.date = date;
-                }
-                if(!fields[3].equals("")) {
-                    editable.days = days;
-                }
-                if(!fields[4].equals("")) {
-                    editable.price = price;
-                }
-                if(!fields[5].equals("")) {
-                    editable.vehicle = vehicle;
-                }
-                System.out.println("edited");
-            }
-        }
+
     }
     void del(String data) {
         try {
@@ -442,13 +196,27 @@ class Database {
         System.out.printf("average=%.2f\n", avg);
     }
     boolean validate(String data, boolean newRecord) {
+        //id validation
         boolean validation = false;
         String[] fields = data.split(";", 6);
+        int id, days;
         if(fields.length == 6){
             try {
+                id = Integer.parseInt(fields[0]);
+                boolean exists = false;
+                for(int i = 0; i < database.size(); i++) {
+                    if(database.get(i).id == id) {
+                        exists = true;
+                    }
+                }
+                if(exists && newRecord){
+                    return false;
+                }
+                else{
 
+                }
             }catch (Exception e) {
-
+                return false;
             }
         }
         else {
