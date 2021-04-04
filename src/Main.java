@@ -59,7 +59,7 @@ public class Main {
                     System.out.println("wrong command");
             }
         }
-        db.export();
+        //db.export();
         sc.close();
     }
 }
@@ -108,12 +108,16 @@ class Database {
         }
     }
     void add(String data, boolean isNew) {
-        if(validate(data, true)){
-
+        if(validate(data, true)) {
+            if(isNew) {
+                System.out.println("added");
+            }
         }
     }
     void edit(String data) {
-
+        if(validate(data, false)) {
+            System.out.println("edited");
+        }
     }
     void del(String data) {
         try {
@@ -196,32 +200,150 @@ class Database {
         System.out.printf("average=%.2f\n", avg);
     }
     boolean validate(String data, boolean newRecord) {
-        //id validation
-        boolean validation = false;
-        String[] fields = data.split(";", 6);
-        int id, days;
-        if(fields.length == 6){
+        boolean validation = true;
+        while(true) {
+            String[] fields = data.split(";", 6);
+            int id, days;
+            double price;
+            if (fields.length != 6) {
+                System.out.println("wrong field count");
+                return false;
+            }
+            //id validation
             try {
-                id = Integer.parseInt(fields[0]);
-                boolean exists = false;
-                for(int i = 0; i < database.size(); i++) {
-                    if(database.get(i).id == id) {
-                        exists = true;
+                id = Integer.parseInt(fields[0].trim());
+            } catch (Exception e) {
+                System.out.println("wrong id");
+                return false;
+            }
+            boolean exists = false;
+            for (int i = 0; i < database.size(); i++) {
+                if (database.get(i).id == id) {
+                    exists = true;
+                }
+            }
+            if (!(id >= 100 && id <= 1000 && (exists ^ newRecord))) {
+                System.out.println("wrong id");
+                validation = false;
+            }
+            //city formation
+            String city = fields[1].trim();
+            String[] cityArr = city.split("\\s+");
+            city = "";
+            if (cityArr.length == 1) {
+                city += cityArr[0].substring(0, 1).toUpperCase();
+                city += cityArr[0].substring(1).toLowerCase();
+            } else {
+                for (int i = 0; i < cityArr.length; i++) {
+                    city += cityArr[i].substring(0, 1).toUpperCase();
+                    city += cityArr[i].substring(1).toLowerCase();
+                    if (i != cityArr.length - 1) {
+                        city += " ";
                     }
                 }
-                if(exists && newRecord){
+            }
+            //date validation
+            String date = fields[2].trim();
+            if (date.isEmpty() && newRecord) {
+                System.out.println("wrong date");
+                return false;
+            }
+            if (date.matches("[0-9]{2}/[0-9]{2}/[0-9]{4}")) {
+                int y = Integer.parseInt(date.substring(6, 10));
+                int m = Integer.parseInt(date.substring(3, 5));
+                int d = Integer.parseInt(date.substring(0, 2));
+                //System.out.println(y + " " + m + " " + d);
+                if (m == 1 || m == 3 || m == 5 || m == 7 || m == 8 || m == 10 || m == 12) {
+
+                    if (d >= 1 && d <= 31) {
+                        return true;
+                    } else {
+                        System.out.println("wrong date");
+                        return false;
+                    }
+                } else if (m == 4 || m == 6 || m == 9 || m == 11) {
+                    if (d >= 1 && d <= 30) {
+                        return true;
+                    } else {
+                        System.out.println("wrong date");
+                        return false;
+                    }
+                } else if (m == 2) {
+                    if (y % 4 == 0 && d >= 1 && d <= 29) {
+                        return true;
+                    } else if (y % 4 == 0 && d >= 1 && d <= 28) {
+                        return true;
+                    }
+                } else {
+                    //System.out.println("yes");
+                    System.out.println("wrong date");
                     return false;
                 }
-                else{
-
+            } else {
+                System.out.println("wrong date");
+                return false;
+            }
+            //days validation
+            if (fields[3].trim().isEmpty() && newRecord) {
+                System.out.println("wrong day count");
+                return false;
+            }
+            try {
+                days = Integer.parseInt(fields[3].trim());
+                if (days < 0) {
+                    System.out.println("wrong day count");
+                    return false;
                 }
-            }catch (Exception e) {
+            } catch (Exception e) {
+                System.out.println("wrong day count");
+                return false;
+            }
+            //price validation
+            if (fields[4].trim().isEmpty() && newRecord) {
+                System.out.println("wrong price");
+                return false;
+            }
+            try {
+                price = Double.parseDouble(fields[4].trim());
+                if (price < 0) {
+                    System.out.println("wrong price");
+                    return false;
+                }
+            } catch (Exception e) {
+                System.out.println("wrong price");
+                return false;
+            }
+            //vehicle validation
+            String vehicle = fields[5].trim();
+            if (vehicle.isEmpty() && newRecord) {
+                System.out.println("wrong vehicle");
+                return false;
+            }
+            if (!(vehicle.equals("PLANE") || vehicle.equals("BUS") || vehicle.equals("BOAT")) || vehicle.equals("TRAIN")) {
+                System.out.println("wrong vehicle");
                 return false;
             }
         }
-        else {
-            System.out.println("wrong field count");
-            return false;
+        System.out.println(validation);
+        if(validation) {
+            if(newRecord) {
+                database.add(new Record(id, city, date, days, price, vehicle));
+                System.out.println("yes");
+            }
+            else {
+                int i = 0;
+                while(i < database.size()) {
+                    if(database.get(i).id == id) {
+                        break;
+                    }
+                    i++;
+                }
+                if(!fields[1].isEmpty()){database.get(i).city = city;}
+                if(!fields[2].isEmpty()){database.get(i).date = date;}
+                if(!fields[3].isEmpty()){database.get(i).days = days;}
+                if(!fields[4].isEmpty()){database.get(i).price = price;}
+                if(!fields[5].isEmpty()){database.get(i).vehicle = vehicle;}
+            }
         }
         return validation;
     }
@@ -238,6 +360,7 @@ class Record implements Comparable<Record> {
         this.price = price;
         this.vehicle = vehicle;
     }
+
     public int compareTo(Record o) {
         int d1 = Integer.parseInt(this.date.split("/")[0]), d2 = Integer.parseInt(o.date.split("/")[0]);
         int m1 = Integer.parseInt(this.date.split("/")[1]), m2 = Integer.parseInt(o.date.split("/")[1]);
