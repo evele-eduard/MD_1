@@ -7,7 +7,7 @@ public class Main {
         Database db = new Database("src/db.csv");
         db.load();
         loop:while(true) {
-            System.out.print(">>");
+            System.out.print(">>>");
             String input = sc.nextLine();
             String[] command = input.split("\\s+", 2);
             switch (command[0]) {
