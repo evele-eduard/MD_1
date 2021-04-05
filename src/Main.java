@@ -7,12 +7,9 @@ public class Main {
         Scanner sc = new Scanner(System.in);
         Database db = new Database("src/db.csv");
         db.load();
-        while(true) {
+        loop:while(true) {
             System.out.print(">>");
             String input = sc.nextLine();
-            if(input.equals("exit")) {
-                break;
-            }
             String[] command = input.split("\\s+", 2);
             switch (command[0]) {
                 case "add":
@@ -58,7 +55,7 @@ public class Main {
                     break;
                 case "exit":
                     db.export();
-                    return;
+                    break loop;
                 default:
                     System.out.println("wrong command");
             }
@@ -95,7 +92,8 @@ class Database {
                 this.update(s, true, false);
             }
             sc.close();
-        } catch (FileNotFoundException e) {
+            fin.close();
+        } catch (Exception e) {
             System.out.print("error");
         }
     }
@@ -110,6 +108,7 @@ class Database {
                 out.println(database.get(i).id + ";" + database.get(i).city + ";" + database.get(i).date + ";" + database.get(i).days + ";" + database.get(i).price + ";" + database.get(i).vehicle);
             }
             out.close();
+            fout.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -236,17 +235,19 @@ class Database {
             return;
         }
         //Pilsētas formātēšana
-        String[] cityArr = city.split("\\s+");
-        city = "";
-        if (cityArr.length == 1) {
-            city += cityArr[0].substring(0, 1).toUpperCase();
-            city += cityArr[0].substring(1).toLowerCase();
-        } else {
-            for (int i = 0; i < cityArr.length; i++) {
-                city += cityArr[i].substring(0, 1).toUpperCase();
-                city += cityArr[i].substring(1).toLowerCase();
-                if (i != cityArr.length - 1) {
-                    city += " ";
+        if(insertNew) {
+            String[] cityArr = city.split("\\s+");
+            city = "";
+            if (cityArr.length == 1) {
+                city += cityArr[0].substring(0, 1).toUpperCase();
+                city += cityArr[0].substring(1).toLowerCase();
+            } else {
+                for (int i = 0; i < cityArr.length; i++) {
+                    city += cityArr[i].substring(0, 1).toUpperCase();
+                    city += cityArr[i].substring(1).toLowerCase();
+                    if (i != cityArr.length - 1) {
+                        city += " ";
+                    }
                 }
             }
         }
@@ -340,11 +341,11 @@ class Record implements Comparable<Record> {
         this.price = price;
         this.vehicle = vehicle;
     }
-
     public int compareTo(Record o) {
         int d1 = Integer.parseInt(this.date.split("/")[0]), d2 = Integer.parseInt(o.date.split("/")[0]);
         int m1 = Integer.parseInt(this.date.split("/")[1]), m2 = Integer.parseInt(o.date.split("/")[1]);
         int y1 = Integer.parseInt(this.date.split("/")[2]), y2 = Integer.parseInt(o.date.split("/")[2]);
+        Date dt = new Date(y1, m1, d1);
         if(y1 > y2) {
             return 1;
         }
