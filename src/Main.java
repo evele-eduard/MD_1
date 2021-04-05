@@ -1,9 +1,7 @@
-import javax.annotation.processing.SupportedSourceVersion;
-import javax.xml.crypto.Data;
 import java.util.*;
 import java.io.*;
 public class Main {
-    public static void main(String[] args) throws FileNotFoundException {
+    public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         Database db = new Database("src/db.csv");
         db.load();
@@ -65,17 +63,13 @@ public class Main {
 }
 class Database {
     private String spaces(int number) {
-        String spaces = "";
-        for (int i = 0; i < number; i++) {
-            spaces += " ";
-        }
-        return spaces;
+        return " ".repeat(Math.max(0, number));
     }
 
     //Visu ierakstu saraksts
-    ArrayList<Record> database = new ArrayList<Record>();
+    ArrayList<Record> database = new ArrayList<>();
     //Record top;
-    private String fname;
+    private final String fname;
 
     Database(String name) {
         this.fname = name;
@@ -104,8 +98,8 @@ class Database {
         try {
             fout = new FileWriter(fname);
             out = new PrintWriter(fout);
-            for (int i = 0; i < database.size(); i++) {
-                out.println(database.get(i).id + ";" + database.get(i).city + ";" + database.get(i).date + ";" + database.get(i).days + ";" + database.get(i).price + ";" + database.get(i).vehicle);
+            for (Record record : database) {
+                out.println(record.id + ";" + record.city + ";" + record.date + ";" + record.days + ";" + record.price + ";" + record.vehicle);
             }
             out.close();
             fout.close();
@@ -142,10 +136,8 @@ class Database {
     }
 
     void print(ArrayList<Record> list) {
-        String hr = "";
-        for (int i = 0; i < 60; i++) {
-            hr += "-";
-        }
+        StringBuilder hr = new StringBuilder();
+        hr.append("-".repeat(60));
         String label = "ID" + spaces(2);
         label += "City" + spaces(17);
         label += "Date" + spaces(7);
@@ -155,14 +147,14 @@ class Database {
         System.out.println(hr);
         System.out.println(label);
         System.out.println(hr);
-        for (int i = 0; i < list.size(); i++) {
+        for (Record record : list) {
             String output = "";
-            output += list.get(i).id + spaces(1);
-            output += list.get(i).city + spaces(21 - list.get(i).city.length());
-            output += list.get(i).date + spaces(1);
-            output += spaces(6 - Integer.toString(list.get(i).days).length()) + list.get(i).days;
-            output += spaces(10 - String.format("%.2f", list.get(i).price).length()) + String.format("%.2f", list.get(i).price) + spaces(1);
-            output += list.get(i).vehicle + spaces(7 - list.get(i).vehicle.length());
+            output += record.id + spaces(1);
+            output += record.city + spaces(21 - record.city.length());
+            output += record.date + spaces(1);
+            output += spaces(6 - Integer.toString(record.days).length()) + record.days;
+            output += spaces(10 - String.format("%.2f", record.price).length()) + String.format("%.2f", record.price) + spaces(1);
+            output += record.vehicle + spaces(7 - record.vehicle.length());
             System.out.println(output);
         }
         System.out.println(hr);
@@ -176,10 +168,10 @@ class Database {
     void find(String data) {
         try {
             double price = Double.parseDouble(data);
-            ArrayList<Record> found = new ArrayList<Record>();
-            for (int i = 0; i < database.size(); i++) {
-                if (price >= database.get(i).price) {
-                    found.add(database.get(i));
+            ArrayList<Record> found = new ArrayList<>();
+            for (Record record : database) {
+                if (price >= record.price) {
+                    found.add(record);
                 }
             }
             this.print(found);
@@ -190,8 +182,8 @@ class Database {
 
     void avg() {
         double avg = 0;
-        for (int i = 0; i < database.size(); i++) {
-            avg += database.get(i).price;
+        for (Record record : database) {
+            avg += record.price;
         }
         avg = avg / database.size();
         System.out.printf("average=%.2f\n", avg);
@@ -206,24 +198,26 @@ class Database {
         for (int i = 0; i < 6; i++) {
             data[i] = data[i].trim();
         }
-        int id = 0, days = 0;
+        int days = 0;
         double price = 0;
-        String city = data[1], date = data[2], vehicle = data[5];
+        StringBuilder city = new StringBuilder(data[1]);
+        String date = data[2];
+        String vehicle = data[5];
         //ID pārbaude
         for (int i = 0; i < 6; i++) {
             data[i] = data[i].trim();
         }
-        if (!data[0].matches("[1-9]{1}[0-9]{2}")) {
+        if (!data[0].matches("[1-9][0-9]{2}")) {
             System.out.println("wrong id");
             return;
         }
-        id = Integer.parseInt(data[0]);
+        int id = Integer.parseInt(data[0]);
         boolean exists = false;
         Record current = null;
-        for (int i = 0; i < database.size(); i++) {
-            if (id == database.get(i).id) {
+        for (Record record : database) {
+            if (id == record.id) {
                 exists = true;
-                current = database.get(i);
+                current = record;
             }
             //System.out.println(id + " " + database.get(i).id + " " + (boolean)(id == database.get(i).id));
         }
@@ -236,17 +230,17 @@ class Database {
         }
         //Pilsētas formātēšana
         if(insertNew) {
-            String[] cityArr = city.split("\\s+");
-            city = "";
+            String[] cityArr = city.toString().split("\\s+");
+            city = new StringBuilder();
             if (cityArr.length == 1) {
-                city += cityArr[0].substring(0, 1).toUpperCase();
-                city += cityArr[0].substring(1).toLowerCase();
+                city.append(cityArr[0].substring(0, 1).toUpperCase());
+                city.append(cityArr[0].substring(1).toLowerCase());
             } else {
                 for (int i = 0; i < cityArr.length; i++) {
-                    city += cityArr[i].substring(0, 1).toUpperCase();
-                    city += cityArr[i].substring(1).toLowerCase();
+                    city.append(cityArr[i].substring(0, 1).toUpperCase());
+                    city.append(cityArr[i].substring(1).toLowerCase());
                     if (i != cityArr.length - 1) {
-                        city += " ";
+                        city.append(" ");
                     }
                 }
             }
@@ -257,7 +251,7 @@ class Database {
             return;
         }
         if (insertNew) {
-            if (!date.matches("[0-9]{2}/[0-9]{2}/[1-9]{1}[0-9]{3}")) {
+            if (!date.matches("[0-9]{2}/[0-9]{2}/[1-9][0-9]{3}")) {
                 System.out.println("wrong date");
                 return;
             }
@@ -314,13 +308,13 @@ class Database {
         }
         //
         if(insertNew) {
-            database.add(new Record(id, city, date, days, price, vehicle));
+            database.add(new Record(id, city.toString(), date, days, price, vehicle));
             if(showMessage) {
                 System.out.println("added");
             }
         }
         else {
-            if(!data[1].isEmpty()) current.city = city;
+            if(!data[1].isEmpty()) current.city = city.toString();
             if(!data[2].isEmpty()) current.date = date;
             if(!data[3].isEmpty()) current.days = days;
             if(!data[4].isEmpty()) current.price = price;
@@ -345,31 +339,23 @@ class Record implements Comparable<Record> {
         int d1 = Integer.parseInt(this.date.split("/")[0]), d2 = Integer.parseInt(o.date.split("/")[0]);
         int m1 = Integer.parseInt(this.date.split("/")[1]), m2 = Integer.parseInt(o.date.split("/")[1]);
         int y1 = Integer.parseInt(this.date.split("/")[2]), y2 = Integer.parseInt(o.date.split("/")[2]);
-        Date dt = new Date(y1, m1, d1);
-        if(y1 > y2) {
-            return 1;
-        }
-        else if(y1 == y2) {
-            if(m1 > m2) {
-                return 1;
-            }
-            else if(m1 == m2){
-                if(d1 > d2) {
+        if (y1 <= y2) {
+            if(y1 == y2) {
+                if(m1 > m2) {
                     return 1;
                 }
-                else if(d1 == d2) {
-                    return 0;
+                else if(m1 == m2){
+                    return Integer.compare(d1, d2);
                 }
-                else  {
+                else {
                     return -1;
                 }
             }
             else {
                 return -1;
             }
-        }
-        else {
-            return -1;
+        } else {
+            return 1;
         }
     }
 }
