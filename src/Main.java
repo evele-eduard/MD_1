@@ -206,7 +206,7 @@ class Database {
         double price = 0;
         StringBuilder city = new StringBuilder(data[1]);
         String date = data[2];
-        String vehicle = data[5];
+        String vehicle = data[5].toUpperCase();
         //ID pārbaude
         for (int i = 0; i < 6; i++) {
             data[i] = data[i].trim();
