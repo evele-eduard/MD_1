@@ -5,7 +5,10 @@ public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
         Database db = new Database("src/db.csv");
-        db.load();
+        if(!db.load()) {
+            System.out.println("error");
+            return;
+        }
         loop:while(true) {
             System.out.print(">>>");
             String input = sc.nextLine();
@@ -63,14 +66,14 @@ public class Main {
     }
 }
 class Database {
+    private final String fname;
     Database(String name) {
         this.fname = name;
     }
     //Visu ierakstu saraksts
     ArrayList<Record> database = new ArrayList<>();
-    private final String fname;
 
-    void load() {
+    boolean load() {
         FileReader fin;
         try {
             fin = new FileReader(fname);
@@ -82,8 +85,9 @@ class Database {
             }
             scan.close();
             fin.close();
+            return true;
         } catch (Exception e) {
-            System.out.print("error");
+            return false;
         }
     }
 
