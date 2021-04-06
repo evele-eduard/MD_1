@@ -108,7 +108,7 @@ class Database {
             e.printStackTrace();
         }
     }
-
+    //Ierakstu dzēšana
     void del(String data) {
         try {
             int id = Integer.parseInt(data);
@@ -135,7 +135,7 @@ class Database {
             System.out.println("wrong id");
         }
     }
-
+    //Ierakstu izvade
     void print(ArrayList<Record> list) {
         StringBuilder hr = new StringBuilder();
         hr.append("-".repeat(60));
@@ -169,6 +169,9 @@ class Database {
     void find(String data) {
         try {
             double price = Double.parseDouble(data);
+            if(price < 0){
+                throw new Exception();
+            }
             ArrayList<Record> found = new ArrayList<>();
             for (Record record : database) {
                 if (price >= record.price) {
@@ -191,7 +194,7 @@ class Database {
     }
 
     void update(String input, boolean insertNew, boolean showMessage) {
-        String[] data = input.split(";", 6);
+        String[] data = input.split(";");
         if (data.length != 6) {
             System.out.println("wrong field count");
             return;
@@ -229,7 +232,7 @@ class Database {
             System.out.println("wrong id");
             return;
         }
-        //Pilsētas formātēšana
+        //Pilsētas nosaukuma formātēšana
         if(insertNew) {
             String[] cityArr = city.toString().split("\\s+");
             city = new StringBuilder();
@@ -251,7 +254,7 @@ class Database {
             System.out.println("wrong date");
             return;
         }
-        if (insertNew) {
+        if (!date.isEmpty()) {
             if (!date.matches("[0-9]{2}/[0-9]{2}/[1-9][0-9]{3}")) {
                 System.out.println("wrong date");
                 return;
@@ -275,7 +278,7 @@ class Database {
             System.out.println("wrong day count");
             return;
         }
-        if (insertNew) {
+        if (!data[3].isEmpty()) {
             if (new Scanner(data[3]).hasNextInt() && new Scanner(data[3]).nextInt() > 0) {
                 days = Integer.parseInt(data[3]);
             } else {
@@ -288,7 +291,7 @@ class Database {
             System.out.println("wrong price");
             return;
         }
-        if (insertNew) {
+        if (!data[4].isEmpty()) {
             if (new Scanner(data[4]).hasNextDouble() && new Scanner(data[4]).nextDouble() > 0) {
                 price = Double.parseDouble(data[3]);
             } else {
@@ -301,13 +304,13 @@ class Database {
             System.out.println("wrong vehicle");
             return;
         }
-        if (insertNew) {
+        if (!vehicle.isEmpty()) {
             if (!(vehicle.equals("BUS") || vehicle.equals("TRAIN") || vehicle.equals("PLANE") || vehicle.equals("BOAT"))) {
                 System.out.println("wrong vehicle");
                 return;
             }
         }
-        //
+        //Ieraksta izveide vai rediģēšana
         if(insertNew) {
             database.add(new Record(id, city.toString(), date, days, price, vehicle));
             if(showMessage) {
@@ -324,6 +327,7 @@ class Database {
         }
     }
 }
+//Ieraksta klase
 class Record implements Comparable<Record> {
     int id, days;
     String city, date, vehicle;
@@ -336,6 +340,7 @@ class Record implements Comparable<Record> {
         this.price = price;
         this.vehicle = vehicle;
     }
+    //Metode, kas ļauj kārtot ierakstus pēc datumiem
     public int compareTo(Record o) {
         int d1 = Integer.parseInt(this.date.split("/")[0]), d2 = Integer.parseInt(o.date.split("/")[0]);
         int m1 = Integer.parseInt(this.date.split("/")[1]), m2 = Integer.parseInt(o.date.split("/")[1]);
