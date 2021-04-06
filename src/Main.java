@@ -63,30 +63,24 @@ public class Main {
     }
 }
 class Database {
-    private String spaces(int number) {
-        return " ".repeat(Math.max(0, number));
-    }
-
-    //Visu ierakstu saraksts
-    ArrayList<Record> database = new ArrayList<>();
-    //Record top;
-    private final String fname;
-
     Database(String name) {
         this.fname = name;
     }
+    //Visu ierakstu saraksts
+    ArrayList<Record> database = new ArrayList<>();
+    private final String fname;
 
     void load() {
         FileReader fin;
         try {
             fin = new FileReader(fname);
-            Scanner sc = new Scanner(fin);
+            Scanner scan = new Scanner(fin);
             String s;
-            while (sc.hasNextLine()) {
-                s = sc.nextLine();
+            while (scan.hasNextLine()) {
+                s = scan.nextLine();
                 this.update(s, true, false);
             }
-            sc.close();
+            scan.close();
             fin.close();
         } catch (Exception e) {
             System.out.print("error");
@@ -108,7 +102,7 @@ class Database {
             e.printStackTrace();
         }
     }
-    //Ierakstu dzēšana
+
     void del(String data) {
         try {
             int id = Integer.parseInt(data);
@@ -135,7 +129,7 @@ class Database {
             System.out.println("wrong id");
         }
     }
-    //Ierakstu izvade
+
     void print(ArrayList<Record> list) {
         StringBuilder hr = new StringBuilder();
         hr.append("-".repeat(60));
@@ -159,6 +153,9 @@ class Database {
             System.out.println(output);
         }
         System.out.println(hr);
+    }
+    private String spaces(int number) {
+        return " ".repeat(Math.max(0, number));
     }
 
     void sort() {
@@ -223,7 +220,6 @@ class Database {
                 exists = true;
                 current = record;
             }
-            //System.out.println(id + " " + database.get(i).id + " " + (boolean)(id == database.get(i).id));
         }
         if (exists && insertNew) {
             System.out.println("wrong id");
