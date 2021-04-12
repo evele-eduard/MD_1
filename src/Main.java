@@ -135,17 +135,9 @@ class Database {
     }
 
     void print(ArrayList<Record> list) {
-        StringBuilder hr = new StringBuilder();
-        hr.append("-".repeat(60));
-        String label = "ID" + spaces(2);
-        label += "City" + spaces(17);
-        label += "Date" + spaces(7);
-        label += spaces(2) + "Days";
-        label += spaces(5) + "Price Vehicle";
-
-        System.out.println(hr);
-        System.out.println(label);
-        System.out.println(hr);
+        System.out.println("------------------------------------------------------------\n" +
+                "ID  City                 Date         Days     Price Vehicle\n" +
+                "------------------------------------------------------------");
         for (Record record : list) {
             String output = "";
             output += record.id + spaces(1);
@@ -156,7 +148,7 @@ class Database {
             output += record.vehicle + spaces(7 - record.vehicle.length());
             System.out.println(output);
         }
-        System.out.println(hr);
+        System.out.println("------------------------------------------------------------");
     }
     private String spaces(int number) {
         return " ".repeat(Math.max(0, number));
