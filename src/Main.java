@@ -4,7 +4,7 @@ import java.io.*;
 public class Main {
     public static void main(String[] args) {
         Scanner sc = new Scanner(System.in);
-        Database db = new Database("src/db.csv");
+        Database db = new Database("db.csv");
         if(!db.load()) {
             System.out.println("error");
             return;
