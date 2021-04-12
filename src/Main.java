@@ -285,7 +285,7 @@ class Database {
         }
         if (!data[4].isEmpty()) {
             if (new Scanner(data[4]).hasNextDouble() && new Scanner(data[4]).nextDouble() > 0) {
-                price = Double.parseDouble(data[3]);
+                price = Double.parseDouble(data[4]);
             } else {
                 System.out.println("wrong price");
                 return;
