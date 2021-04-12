@@ -225,7 +225,7 @@ class Database {
             return;
         }
         //Pilsētas nosaukuma formātēšana
-        if(insertNew) {
+        if(insertNew && !city.isEmpty()) {
             String[] cityArr = city.toString().split("\\s+");
             city = new StringBuilder();
             if (cityArr.length == 1) {
