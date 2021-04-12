@@ -195,7 +195,7 @@ class Database {
     }
 
     void update(String input, boolean insertNew, boolean showMessage) {
-        String[] data = input.split(";");
+        String[] data = input.split(";", 6);
         if (data.length != 6) {
             System.out.println("wrong field count");
             return;
