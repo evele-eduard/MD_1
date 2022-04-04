@@ -15,11 +15,11 @@ while True:
         for update in updates:
             #print(update)
             if int(update['update_id'] > lastUpdateID):
-                print(update['message']['text'] + " " + datetime.fromtimestamp(update['message']['date']).strftime('%d-%m-%Y %H:%M:%S'))
+                print(update['message']['text'] + " " + " "+ datetime.fromtimestamp(update['message']['date']).strftime('%d-%m-%Y %H:%M:%S'))
+            if update['message']['chat']['id'] != 441555837:
                 requests.get(url + '/sendMessage?chat_id={}&text={}'.format(update['message']['chat']['id'], '"' + update['message']['text'] + '" - Жак Фреско' ))
-                lastUpdateID = int(update['update_id'])
-        pass
+            lastUpdateID = int(update['update_id'])
     
-    time.sleep(1)
+   time.sleep(1)
 
 input()
